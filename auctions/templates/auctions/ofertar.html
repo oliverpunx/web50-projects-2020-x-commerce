@@ -1,0 +1,57 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if error %}
+<h3 class="msgError">{{ error }} </h3>
+{% endif %}
+
+{% if msgOK %}
+<h3 class="msgOk">{{ msgOK }}</h3>
+{% endif %}
+
+{% if Producto %}
+    <h2 align="center">Bid for a item</h2>
+    
+    <div class="container">
+    
+    {% for lista in Producto %}
+    <form action="{% url 'do-bid' user.username lista.idProducto %}" method="post" class="container-fluid" enctype=”multipart/form-data”>
+        {% csrf_token %}
+        
+            <div class="img-cart">
+                {% if lista.imagen %}
+                    <img align="center" src="{{lista.imagen}}" class="img-product" alt="{{lista.titulo}}"/>
+                {% else %}
+                    <p align="center">Imagen no disponible</p>
+                {% endif %}    
+        </div>
+
+            <div class="form-group">
+                <label class="form-label" for="idProducto">Id:</label>
+                <input disabled autofocus class="form-control" type="text" name="idProducto" value="{{lista.idProducto}}"  id="idProducto">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="titulo">Titulo:</label>
+                <input disabled class="form-control" type="text" name="titulo" value="{{lista.titulo}}"  id="titulo">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="descripcion">Descripcion:</label>
+                <input disabled class="form-control" type="text" name="descripcion"  value="{{lista.descripcion}}" id="descripcion">
+            </div>     
+            
+            <div class="form-group">
+                <label class="form-label" for="ofertaInicial">Oferta Inicial:</label>
+                <input disabled class="form-control" type="number" value="{{lista.ofertaInicial}}" min="0.01" max="999,999,999.99" step=0.01 name="ofertaInicial"  id="ofertaInicial">
+            </div>       
+
+            <div class="form-group">
+                <label class="form-label" for="oferta"><span>Su oferta:</span></label>
+                <input class="form-control" type="number" min="{{lista.ofertaInicial}}" max="999,999,999.99" value="{{lista.ofertaInicial}}" step=0.01 name="oferta"  id="oferta" required>
+            </div>         
+            
+            <input class="btn btn-primary" type="submit" value="Send Bid">
+    </form>  
+    {% endfor %}
+{% endif %}    
+{% endblock %}

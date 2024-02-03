@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if msgOK %}
+    <div class="container-sm">
+        <h2>{{msgOK}}</h2>
+        <ul>
+            <li>Id Producto: {{maxOferta[0].idProducto}}</li>
+            <li>Descripcion: {{Descripcion}}</li>
+            <li>Valor Oferta: {{maxOferta[0].valorOferta}}</li>
+            <li>Usuario: {{maxOferta[0].usuarioOferta}}</li>
+        </ul>
+    </div>
+{% endif %}
+
+{% endblock %}

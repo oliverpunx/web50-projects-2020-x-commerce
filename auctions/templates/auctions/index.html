@@ -1,0 +1,125 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {{ form.imagen.errors }}   
+    {{ msgOK }}
+    {{ errorW }}
+
+    {% if listado %}
+        <h2 align="center">Active Listings</h2>
+    
+        <div class="container-sm main-card">
+            <div class="row">                
+                {% for lista in listado %}
+                        <div class="col product-cart" id="product-cart">
+                            <div class="img-cart">
+                                    {% if lista.imagen %}
+                                    <img align="center" src="{{lista.imagen}}" class="img-product" alt="{{lista.titulo}}"/>
+                                    {% else %}
+                                    <p align="center">Imagen no disponible</p>
+                                    {% endif %}    
+                            </div>
+                            
+                            <div class="det-item">
+                                <div class="row"> <h3> {{ lista.titulo }} </h3> </div>
+                                
+                                <div class="row">
+                                    <div class="row">
+                                        <ul>
+                                            <li> <span>Ref:</span> {{ lista.idProducto }}</li>
+                                            {% if bidClosed %}
+                                                {% for offers in bidClosed %}
+                                                    {% if offers.idProducto == lista.idProducto %}   
+                                                        <li> <span>Winning Bid: </span>    {{ offers.valorOferta }} </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                {% if ofertas %}
+                                                        {% for offers in lista.ofertaListado.all %}
+                                                            <li> Best bid:  <span> $ {{ offers.valorOferta }} </span>  </li>
+                                                        {% endfor %}
+                                                {% else %}
+                                                    <li> <span>Price:</span>    {{ lista.ofertaInicial }} </li>                                                
+                                                {% endif %}
+                                            {% endif %}
+                                        </ul>
+                                        
+                                    </div>
+                                </div>
+                                {% if lista.ofertasListado.count > 0 %}
+                                    <div class="row">
+                                        <p>{{ lista.ofertasListado.count }} bid(s) so far.</p>
+                                    </div>
+                                {% else %}
+                                    <div class="row">
+                                        <p>No one bid.</p>
+                                    </div>                                
+                                {% endif %}
+                                <div class="row">
+                                    <a id="btnVer" href="{% url 'listado' lista.idProducto %}">Read More...</a>
+                                </div>
+
+                                <div class="row">
+                                        <p>Listed by: {{ lista.usuarioCreacion }}</p>
+                                </div>
+                                
+                                
+                                
+                                    {% if user.is_authenticated %}
+                                    <div class="row">
+                                        {% if lista.estado == "A" and user.username == lista.usuarioCreacion %}
+                                              <div class="col">
+                                                    <a class="btn btn-danger btnTodos" href="{% url 'close-auction' lista.idProducto %}">X Close Auction</a>
+                                               </div>
+                                        {% else %}
+                                            {% if lista.estado == "I"  %}
+                                                    {% for offers in lista.ofertasListado.all %}
+                                                            {% if user.username == offers.usuarioOferta and offers.estado == 'F' %}
+                                                                  <div class="col">
+                                                                    <strong style="color: green; ">You won this auction!</strong>
+                                                                  </div>
+                                                            {% endif %}
+                                                    {% endfor %}                                            
+                                                    
+                                                    <div class="col">
+                                                        <p align="center" class="estado">Closed</p>
+                                                    </div>                                                     
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+                                
+                            </div>
+                            {% if user.is_authenticated %}
+                                <div class="det-item">
+                                    {% if user.is_authenticated %}
+                                        {% if user.username != lista.usuarioCreacion and lista.estado == "A"  %}
+                                           <a class="btn btn-success btnTodos" href="{% url 'ofertar' lista.idProducto %}">$ Ofertar</a>
+                                           <a class="btn btn-info btnTodos" href="{% url 'watchlist' lista.idProducto user.username 'add' %}">+ Watchlist</a>
+                                           <a class="btn btn-warning btnTodos" href="{% url 'watchlist' lista.idProducto user.username 'remove' %}">- Watchlist</a>
+       
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}   
+                        </div>
+                {% endfor %}
+            </div>
+        </div>    
+    {% endif %}
+
+    {% if miListado %}
+        <div class="container-sm">
+            <h2>My Watchlist</h2>
+            {% if miListado %}
+                <ul>
+                    {% for lista in miListado %}
+                        <li>Id - Código: {{lista.idSecuencia}} - {{lista.idProducto}} added {{lista.fechaCreacion}}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>List empty.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

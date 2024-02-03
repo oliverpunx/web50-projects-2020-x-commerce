@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if categorias %}
+<h2 align="center">Categories</h2>
+<div class="container">
+    <div class="row">
+            {% for cat in categorias %}
+                <div class="col" id="colCategoria">
+                    <img src="{{ cat.imagen }}" class="card-img-top" alt="...">
+                    <h5 class="card-title">{{ cat.titulo }}</h5>
+                    <p class="card-text"><strong>{{ cat.descripcion }}</strong></p>
+                    <a href="{% url 'category' cat.idCategoria %}" class="btn btn-primary">Lets Go!</a>
+                </div>
+            {% endfor %}
+    </div>
+ </div>   
+
+{% endif %}
+
+{% endblock %} 

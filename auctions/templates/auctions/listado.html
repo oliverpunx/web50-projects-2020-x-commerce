@@ -1,0 +1,91 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container-sm">
+    <div class="row justify-content-center">
+    {% for lista in listado %}
+        <div class="col-6">
+            <h2>{{ lista.titulo }}</h2>
+            <img class="img-product-max"  src="{{lista.imagen}}" alt="lista.titulo"/>
+        </div>
+        <div class="col-6">
+            <ul>
+                <li>Description: {{ lista.descripcion }} </li>
+                {% for category in categoria %}
+                    <li>Category: {{ category.descripcion }} </li>
+                {% endfor %}
+                
+                {% if ofertas %}
+                    <li>Best Bid: {{ ofertas.valorOferta }}  </li>
+                    {% if user.is_authenticated %}
+                        {% if ofertas.usuarioOferta == user.username %}
+                            <p>(By yourself)</p>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <li>Price: {{ lista.ofertaInicial }} </li>                
+                {% endif %}
+                
+                <a href="{% url 'index' %}"> << Back </a>
+            </ul>
+            {% if user.is_authenticated %}
+                {% if lista.estado == "A" and user.username != lista.usuarioCreacion %}
+                   {% if watchlist %}
+                      <a class="btn btn-warning" href="{% url 'watchlist' lista.idProducto user.username 'remove' %}">- Watchlist</a>
+                   {% else %}
+                      <a class="btn btn-info" href="{% url 'watchlist' lista.idProducto user.username 'add' %}">+ Watchlist</a>
+                   {% endif %}
+                {% endif %}
+            {% endif %}
+
+           
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+<div class="container-sm" id="secComment">
+    <h3>Comments</h3>
+    <form id="frmComments" method="post" action="{% url 'comments' %}">
+        {% csrf_token %}
+        <div class="row">
+            <textarea id="txaComment" name="comment"></textarea>
+            <input id="idProducto" name="idProducto" type="hidden" value="{{idProducto}}"/>
+            <input id="userComment" name="userComment" type="hidden" value="{{user.username}}"/>
+        </div>
+        <div class="row">
+            <input id="btnComment" class="btn btn-success" type="submit" value="Add Comment" />
+        </div>
+    </form>
+</div>
+    {% if comentarios %}
+    <div class="container-sm" id="lstComment">
+        <h3>Last Comments </h3>
+        {% for comments in comentarios %}
+            <div class="row">
+                <div class="col">
+                    {% if comments.usuarioCreacion == user.username %}
+                        <p class="parCommentId">By: yourself</p>
+                    {% else %}
+                        <p class="parCommentId">By: {{ comments.usuarioCreacion }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="col">
+                    <p class="parCommentId">Created at: {{ comments.fechaCreacion }}</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <textarea id="txaComment" disabled>{{comments.mensaje}}</textarea>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="container-sm" id="lstComment">
+        <h4>No comments yet</h4>
+    </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

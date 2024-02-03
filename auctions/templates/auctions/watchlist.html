@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% if msgOK %}
+<div class="container-sm">
+    <div class="container-sm">
+        <p align="justify">{{msgOK}}</p>
+    </div>
+    <div class="container-sm">
+        <h2>My Watchlist</h2>
+        {% if miListado %}
+        <ul>
+            {% for lista in miListado %}
+                <li>Id - Código: <a href="{% url 'listado' lista.idProducto.idProducto %}">{{lista.idSecuencia}} - {{lista.idProducto.idProducto}} - {{lista.idProducto.titulo}}</a> added {{lista.fechaCreacion}}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>List empty.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

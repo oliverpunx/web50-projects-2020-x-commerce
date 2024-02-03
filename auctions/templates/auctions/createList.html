@@ -1,0 +1,54 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2 align="center">Create List</h2>
+    
+    <div class="container">
+        {% if error %}
+        <h3 class="msgError">{{ error }}</h3>
+        {% endif %}
+
+        {% if creado %}
+        <h3 class="msgOk">{{ creado }}</h3>
+        {% endif %}
+    </div>
+
+    <form action="{% url 'create' user.username %}" method="post" class="container-fluid" enctype=”multipart/form-data”>
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="idProducto">Id:</label>
+            <input autofocus class="form-control" type="text" name="idProducto"  id="idProducto"  placeholder="Id" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="titulo">Titulo:</label>
+            <input class="form-control" type="text" name="titulo"  id="titulo" placeholder="titulo" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="descripcion">Descripcion:</label>
+            <input class="form-control" type="text" name="descripcion" id="descripcion" placeholder="descripcion" required>
+        </div>     
+        
+        <div class="form-group">
+            <label class="form-label" for="ofertaInicial">Monto:</label>
+            <input class="form-control" type="number" min="0.01" max="999,999,999.99" step=0.01 name="ofertaInicial"  id="ofertaInicial" required placeholder="Ingrese oferta inicial">
+        </div>       
+
+        <div class="form-group">
+            <label class="form-label" for="category">Categoria:</label>
+            <select class="form-control" name="category" id="category">
+                {%  for listCategory in category %}
+                    <option value="{{ listCategory.idCategoria }}" {{selected}}> {{ listCategory.descripcion }} </option>
+                {% endfor %}
+            </select>
+        </div>            
+        
+        
+        <div class="form-group">
+            <label class="form-label" for="imagen">Imagen (URL):</label>
+            <input class="form-control" type="url" name="imagen" id="imagen"/>
+        </div>  
+        
+        
+        <input class="btn btn-primary" type="submit" value="Crear">
+    </form>   
+{% endblock %}
